@@ -1,0 +1,50 @@
+
+.budgetCard{
+    font-size: 0.7rem;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    font-weight: 300;
+}
+
+.budgetCard .card-option{
+    visibility: hidden;
+}
+
+.budgetCard:hover{
+    box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
+    -webkit-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
+    -moz-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
+}
+
+.budgetCard:hover .card-option{
+    visibility: visible;
+    transition: all .5s;
+}
+
+
+.budgetCard .card-option .btn{
+    font-size: 0.7rem;    
+    font-family: 'Poppins', sans-serif;
+    padding: 5px 10px;
+    color: white;
+    height: 100%;
+    white-space: nowrap;
+}
+
+.budgetCard .card-header{
+    background-color: inherit;
+}
+
+.budgetCard .card-title{
+    font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.budgetCard .progress{
+    height: 10px;
+}
+
