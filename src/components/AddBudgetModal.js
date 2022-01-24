@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import { app } from '../firebase'
@@ -12,20 +12,14 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function AddBudgetModal( props ) {
   
-    const budgetNameRef = useRef();
-    const maxExpensesRef = useRef();
-    const currentExpensesRef = useRef();
-    const descriptionRef = useRef();
-
     const [validated, setValidated] = useState(false);
 
-    const { uid, photoURL } = getAuth().currentUser;
+    const { uid } = getAuth().currentUser;
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation(); 
+    const handleSubmit = (e) => {
+        if (e.currentTarget.checkValidity() === false) {
+            e.preventDefault();
+            e.stopPropagation(); 
             setValidated(true);
             return;
         }
@@ -33,23 +27,25 @@ export default function AddBudgetModal( props ) {
         setValidated(false);
 
         props.onHide();
-        event.preventDefault();
+        e.preventDefault();
 
-        try {
-            const data = {
-                budgetName: budgetNameRef.current.value,
-                maxExpenses: Number(maxExpensesRef.current.value),
-                currentExpenses: Number(currentExpensesRef.current.value),
-                description: descriptionRef.current.value,
-                createdAt: serverTimestamp(),
-                uid,
-            }
+        const { name, 
+            maxExpenses,
+            currentExpenses, 
+            description } = e.target;
 
-            addDoc(collection(db, "budgets"), data);
-            console.log("Data: ", data);
-        } catch (e) {
-            console.error("Error adding document: ", e);
+        const data = {
+            budgetName: name.value,
+            maxExpenses: Number(maxExpenses.value),
+            currentExpenses: Number(currentExpenses.value),
+            description: description.value,
+            createdAt: serverTimestamp(),
         }
+
+        addDoc(collection(db, "users", uid, "budgets"), data)
+            .then(() => {
+                console.log("Data added successfully. ", data);
+            })
     };
 
 
@@ -62,23 +58,23 @@ export default function AddBudgetModal( props ) {
             <Form className='vstack gap-3' noValidate validated={validated} onSubmit={handleSubmit}>
                 <Form.Group>
                     <Form.Label>Budget Name</Form.Label>
-                    <Form.Control ref={budgetNameRef} type="text" required/>
+                    <Form.Control type="text" name="name" required/>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Maximum Expenses</Form.Label>
-                    <Form.Control ref={maxExpensesRef} type="number" required/>
+                    <Form.Control type="number" name="maxExpenses" required/>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Current Expenses</Form.Label>
-                    <Form.Control ref={currentExpensesRef} type="number" required readOnly value={0}/>
+                    <Form.Control type="number" name="currentExpenses" required readOnly value={0}/>
                 </Form.Group>
                 <Form.Group >
                     <Form.Label>Description</Form.Label>
-                    <Form.Control ref={descriptionRef} as="textarea" rows={3} />
+                    <Form.Control as="textarea" name="description" rows={3} />
                 </Form.Group>
                 <Form.Group className='text-end mt-3'>
                     <Button type="submit" size="sm">
-                        Save Changes
+                        Add Budget
                     </Button>
                 </Form.Group>
             </Form>

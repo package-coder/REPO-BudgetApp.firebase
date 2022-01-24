@@ -1,22 +1,22 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 import { db } from '../firebase';
-import { doc, updateDoc, getDoc } from "firebase/firestore"; 
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { getAuth } from 'firebase/auth';
+import { doc, updateDoc, getDoc, Timestamp, serverTimestamp } from "firebase/firestore"; 
 
-export default function AddExpensesModal({ show, onHide, docData }) {
+export default function AddExpensesModal({ show, onHide, docData, docId }) {
 
-    const expendRef = useRef();
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
 
     const [validated, setValidated] = useState(false);
 
+    const { uid } = getAuth().currentUser;
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation(); 
+    const handleSubmit = (e) => {
+        if (e.currentTarget.checkValidity() === false) {
+            e.preventDefault();
+            e.stopPropagation(); 
             setValidated(true);
             return;
         }
@@ -24,14 +24,17 @@ export default function AddExpensesModal({ show, onHide, docData }) {
         setValidated(false);
 
         onHide();
-        event.preventDefault();
+        e.preventDefault();
 
-        const ref = doc(db, "budgets", docData.id);
+        const { amount, date } = e.target;
+
+        const ref = doc(db, "users", uid, "budgets", docId);
         getDoc(ref).then(res => {
             const expend = res.data().currentExpenses;
-            console.log(expend)
+
             updateDoc(ref, {
-                "currentExpenses": expend + Number(expendRef.current.value)
+                "currentExpenses": expend + parseInt(amount.value),
+                "lastExpendDate": date.value
             });
             
         });
@@ -39,28 +42,25 @@ export default function AddExpensesModal({ show, onHide, docData }) {
        
     };
 
-
-    const data = docData.data();
-
    return (
 
     <Modal show={show} onHide={onHide}>
         <Modal.Header closeButton className='bg-light'>
-            <Modal.Title>Add Expenses</Modal.Title>
+            <Modal.Title>{docData.budgetName}</Modal.Title>
         </Modal.Header>
         <Modal.Body className="m-3">
         <Form className='vstack gap-3' noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group>
-                <Form.Label>Budget Name</Form.Label>
-                <Form.Control type="text" readOnly value={data && data.budgetName}/>
+                <Form.Label>New Expend Amount</Form.Label>
+                <Form.Control type="number" name="amount" required />
             </Form.Group>
             <Form.Group>
-                <Form.Label>Add Expend</Form.Label>
-                <Form.Control ref={expendRef} type="number" required />
+                <Form.Label>Date</Form.Label>
+                <Form.Control name="date" readOnly value={Timestamp.now().toDate().toLocaleDateString("en-US", options)} />
             </Form.Group>
              <Form.Group className='text-end mt-3'>
                 <Button type="submit" size="sm">
-                    Save Changes
+                    Add Expenses
                 </Button>
             </Form.Group>
         </Form>

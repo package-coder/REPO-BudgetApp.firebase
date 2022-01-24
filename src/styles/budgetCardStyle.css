@@ -1,20 +1,22 @@
 
 .budgetCard{
-    font-size: 0.7rem;
-    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
     cursor: pointer;
     font-weight: 300;
-    flex: 0 0 32.4%;
+    flex: 0 0 23.6%;
+    box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.25);
+    -webkit-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.25);
+    -moz-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.25);
+    position: relative;
+    color: #58585d;
 }
+
 
 .budgetCard .card-option{
+    position: absolute;
+    top: 0;
+    right: 0;
     visibility: hidden;
-}
-
-.budgetCard:hover{
-    box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
-    -webkit-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
-    -moz-box-shadow: 4px 5px 19px 1px rgba(122, 122, 122, 0.16);
 }
 
 .budgetCard:hover .card-option{
@@ -25,27 +27,45 @@
 
 .budgetCard .card-option .btn{
     font-size: 0.7rem;    
-    font-family: 'Poppins', sans-serif;
     padding: 5px 10px;
     color: white;
-    height: 100%;
-    white-space: nowrap;
+    border-radius: 0 !important;
 }
 
+.budgetCard .card-body,
 .budgetCard .card-header{
     background-color: inherit;
 }
 
+
 .budgetCard .card-title{
     font-size: 1.5rem;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: black;
+}
+
+.budgetCard,
+.budgetCard .card-body{
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.budgetCard .card-header{
+    border-radius: 5px 5px 0 0 !important;
+    border: none !important;
 }
 
 .budgetCard .progress{
-    height: 10px;
+    height: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(214, 214, 214);
 }
 
+.budgetCard .budgetCard-currentExpenses{
+    font-weight: 500;
+}

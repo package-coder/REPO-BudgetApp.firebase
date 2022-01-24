@@ -12,3 +12,8 @@ html, body{
 *, *::after, *::before{
   box-sizing: border-box;
 }
+
+.btn-primary{
+  background-color: #665df5 !important;
+  border-color: #665df5 !important;
+}

@@ -2,7 +2,6 @@ import './App.css';
 
 import Budgets from './components/Budgets';
 import SignIn from './components/SignIn';
-import SignOut from './components/SignOut';
 import LoadingPage from './components/LoadingPage';
 
 import { app } from './firebase'
@@ -18,11 +17,9 @@ function App() {
 
   if(loading) return <LoadingPage />
   if(user) return <div>
-    <SignOut />
     <Budgets user={user}/>
   </div>
   
-
   return <SignIn  />
 }
 

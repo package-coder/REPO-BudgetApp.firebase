@@ -8,6 +8,7 @@ import { Button } from 'react-bootstrap'
   
 
 export default function SignIn() {
+
     function signInWithGoogle(){
         signInWithPopup(getAuth(), new GoogleAuthProvider())
           .then(result => {
@@ -16,6 +17,9 @@ export default function SignIn() {
           .catch(console.log);
     
       }
+
+
+      
     
       return <Button onClick={signInWithGoogle}>Sign In With Google</Button>
 }
