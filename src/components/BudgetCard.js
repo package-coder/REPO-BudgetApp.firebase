@@ -4,7 +4,7 @@ import AddExpensesModal from './AddExpensesModal';
 
 import '../styles/budgetCardStyle.css'
 
-export default function BudgetCard( { doc, constant=false } ){
+export default function BudgetCard( { doc, constant=false, caption } ){
 
     const [show, setShow] = useState(false);
 
@@ -17,7 +17,7 @@ export default function BudgetCard( { doc, constant=false } ){
 
     return (
         <>
-            <Card className="budgetCard">
+            <Card className={`${constant && 'budgetCard-constant'} budgetCard`}>
 
                 <Card.Header className="p-4">
                     <div className='d-flex justify-content-between align-items-start gap-1'>
@@ -27,11 +27,11 @@ export default function BudgetCard( { doc, constant=false } ){
                             <Button variant="secondary"><i class="bi bi-info-lg"></i></Button>
                         </span>
                     </div>
-                    <section>Last Expend Date:{' '}{data && data.lastExpendDate}</section>
+                    <section className='constant-hidden'>Last Expend Date:{' '}{data && data.lastExpendDate}</section>
                 </Card.Header>
                 <Card.Body className="p-4 pt-3">
                     <div className='d-flex justify-content-between align-items-end'>
-                        <span>Expenses Progress</span>
+                        <span>{constant ? caption : 'Expenses Progress'}</span>
                         <span className="d-flex justify-content-end align-items-center fs-6" >
                             <span className='fs-5 budgetCard-currentExpenses' >{data.currentExpenses}</span>
                             {' '}/{' '}
