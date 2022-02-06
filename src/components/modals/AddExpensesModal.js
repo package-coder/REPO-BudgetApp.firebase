@@ -1,52 +1,61 @@
 import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { getAuth } from 'firebase/auth';
 import { doc, updateDoc, getDoc, Timestamp, serverTimestamp } from "firebase/firestore"; 
 
-export default function AddExpensesModal({ show, onHide, docData, docId }) {
+function updateExpenses(docId, func, date){
+
+    const { uid } = getAuth().currentUser;
+
+    const ref = doc(db, "users", uid, "budgets", docId);
+
+    getDoc(ref).then(res => {
+        const currentValue = parseInt(res.data().currentExpenses);
+
+        return updateDoc(ref, {
+            "currentExpenses": func(currentValue),
+            "lastExpendDate": date
+        });
+
+    }).catch(console.error);
+}
+
+export default function AddExpensesModal({ show, onHide, budgetName, docId }) {
 
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
 
     const [validated, setValidated] = useState(false);
 
-    const { uid } = getAuth().currentUser;
 
-    const handleSubmit = (e) => {
+    function handleSubmit(e) {
+        e.preventDefault();
+
         if (e.currentTarget.checkValidity() === false) {
-            e.preventDefault();
             e.stopPropagation(); 
             setValidated(true);
             return;
         }
 
-        setValidated(false);
 
+        setValidated(false);
         onHide();
-        e.preventDefault();
 
         const { amount, date } = e.target;
 
-        const ref = doc(db, "users", uid, "budgets", docId);
-        getDoc(ref).then(res => {
-            const expend = res.data().currentExpenses;
-
-            updateDoc(ref, {
-                "currentExpenses": expend + parseInt(amount.value),
-                "lastExpendDate": date.value
-            });
-            
-        });
-    
-       
+        updateExpenses(
+            docId, 
+            (value) => Number(value) + Number(amount.value), 
+            date.value
+        )
     };
 
    return (
 
     <Modal show={show} onHide={onHide}>
         <Modal.Header closeButton className='bg-light'>
-            <Modal.Title>{docData.budgetName}</Modal.Title>
+            <Modal.Title>{budgetName}</Modal.Title>
         </Modal.Header>
         <Modal.Body className="m-3">
         <Form className='vstack gap-3' noValidate validated={validated} onSubmit={handleSubmit}>

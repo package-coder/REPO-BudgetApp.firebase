@@ -1,25 +1,22 @@
-import './App.css';
+import './styles/App.css';
 
-import Budgets from './components/Budgets';
-import SignIn from './components/SignIn';
-import LoadingPage from './components/LoadingPage';
+import LoadingPage from './pages/LoadingPage';
+import SignIn from './pages/SignIn';
 
-import { app } from './firebase'
-import { getAuth } from 'firebase/auth';
+import { auth } from './firebase'
 import { useAuthState } from 'react-firebase-hooks/auth';
+import Home from './pages/Home';
 
 
 
 
 
 function App() {
-  const [user, loading] = useAuthState(getAuth());
+  const [user, loading] = useAuthState(auth);
 
   if(loading) return <LoadingPage />
-  if(user) return <div>
-    <Budgets user={user}/>
-  </div>
-  
+  if(user)    return <Home />
+ 
   return <SignIn  />
 }
 

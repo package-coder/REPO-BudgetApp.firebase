@@ -1,0 +1,17 @@
+.budgets-heading{
+    font-weight: 900;
+    font-size: 3rem !important;
+    color: #222;
+}
+
+.budgets-header{
+    font-family: 'Mulish', sans-serif;
+}
+
+
+.budgets-header .btn{
+    font-size: 0.8rem;
+    padding-left: 1.3rem;
+    padding-right: 1.3rem;
+    font-weight: bold;
+}

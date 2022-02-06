@@ -1,0 +1,12 @@
+.signin-page{
+    height: 100vh !important;
+    font-family: 'Mulish', sans-serif;
+}
+
+
+.signin-page .heading{
+    font-weight: 900;
+    font-size: 3rem !important;
+    color: #222;
+    text-align: center;
+}

@@ -18,20 +18,28 @@
     border-radius: 0 !important;
 }
 
-.budgetCard .card-option{
+.budgetCard .card-header{
+    flex: 1 1 auto;
+}
+
+.budgetCard .card-body{
+    flex: none;
+}
+
+.budgetCard .card-controls{
     position: absolute;
     top: 0;
     right: 0;
     visibility: hidden;
 }
 
-.budgetCard:hover .card-option{
+.budgetCard:hover .card-controls{
     visibility: visible;
     transition: all .5s;
 }
 
 
-.budgetCard .card-option .btn{
+.budgetCard .card-controls .btn{
     font-size: 0.7rem;    
     padding: 5px 10px;
     color: white;
@@ -69,19 +77,20 @@
 }
 
 
-
 .budgetCard .budgetCard-currentExpenses{
     font-weight: 500;
 }
 
-.budgetCard-constant{
+
+.budgetCard .passive-controls,
+.budgetCard-passive .passive-hide{
+    display: none !important;
+}
+
+.budgetCard-passive{
     background-color: hsla(244, 88%, 66%, 0.05) !important;
 }
 
-.budgetCard-constant .constant-hidden{
-    visibility: hidden !important;
-}
-
-.budgetCard-constant .progress-bar{
+.budgetCard-passive .progress-bar{
     background-color: #665df5 !important;
 }

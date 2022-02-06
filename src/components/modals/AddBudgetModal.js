@@ -1,33 +1,34 @@
 import { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { app } from '../firebase'
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { getAuth } from 'firebase/auth';
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 
 
-
+function appendBudget(data){
+    const { uid } = getAuth().currentUser;
+    return addDoc(collection(db, "users", uid, "budgets"), data);
+}
 
 export default function AddBudgetModal( props ) {
   
     const [validated, setValidated] = useState(false);
 
-    const { uid } = getAuth().currentUser;
 
     const handleSubmit = (e) => {
+
+        e.preventDefault();
+
         if (e.currentTarget.checkValidity() === false) {
-            e.preventDefault();
             e.stopPropagation(); 
             setValidated(true);
             return;
         }
 
         setValidated(false);
-
         props.onHide();
-        e.preventDefault();
 
         const { name, 
             maxExpenses,
@@ -42,10 +43,7 @@ export default function AddBudgetModal( props ) {
             createdAt: serverTimestamp(),
         }
 
-        addDoc(collection(db, "users", uid, "budgets"), data)
-            .then(() => {
-                console.log("Data added successfully. ", data);
-            })
+        appendBudget(data);
     };
 
 
