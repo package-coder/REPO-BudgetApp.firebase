@@ -1,12 +1,12 @@
 import { db } from '../firebase'
-import { collection } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { useCollection } from "react-firebase-hooks/firestore"
 
 
-export default function useBudgets(uid){
+export function useBudgetsCollection(uid){
 
     const [value, loading, error] = useCollection(
-        collection(db, "users", uid, "budgets"),
+        collection(db, "users", uid, "cards"),
         {
           snapshotListenOptions: { includeMetadataChanges: true },
         }
@@ -15,6 +15,10 @@ export default function useBudgets(uid){
       
 
 
-    return {value, loading, error}
+    return [value, loading, error]
 }
 
+export function filterBudgets(budgets){
+  if(!budgets) return;
+  return budgets.docs.filter(doc => !doc.data().passive)
+}

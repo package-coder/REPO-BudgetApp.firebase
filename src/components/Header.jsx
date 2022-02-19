@@ -1,10 +1,10 @@
 import { Container, Stack, Button } from "react-bootstrap";
-import useShow from "../hooks/useShow";
+import useModalHandler from "../hooks/useModalHandler";
 import AddBudgetModal from "./modals/AddBudgetModal";
 import '../styles/Header.css'
 
 function Header(){
-  const {show, handleShow, handleClose} = useShow(false);
+  const [show, handleShow, handleClose] = useModalHandler(false);
 
 
     return (

@@ -1,0 +1,7 @@
+
+.amountModal .modal-content,
+.budgetModal .modal-content,
+.deleteModal .modal-content{
+    border: none !important;
+    border-radius: 0 !important;
+}

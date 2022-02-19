@@ -17,3 +17,7 @@ export const app = initializeApp({
 export const db = getFirestore(app);
 
 export const auth = getAuth();
+
+export function getCurrentUserId(){
+  return auth.currentUser && auth.currentUser.uid;
+}

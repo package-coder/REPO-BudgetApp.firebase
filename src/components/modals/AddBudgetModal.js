@@ -1,21 +1,15 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { db } from '../../firebase';
-import { getAuth } from 'firebase/auth';
+import { serverTimestamp } from "firebase/firestore"; 
+import '../../styles/Modals.css'
+import { BudgetContext } from '../../context/BudgetContext';
 
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
-
-
-function appendBudget(data){
-    const { uid } = getAuth().currentUser;
-    return addDoc(collection(db, "users", uid, "budgets"), data);
-}
 
 export default function AddBudgetModal( props ) {
   
     const [validated, setValidated] = useState(false);
-
+    const { addBudget } = useContext(BudgetContext)
 
     const handleSubmit = (e) => {
 
@@ -36,21 +30,21 @@ export default function AddBudgetModal( props ) {
             description } = e.target;
 
         const data = {
-            budgetName: name.value,
-            maxExpenses: Number(maxExpenses.value),
-            currentExpenses: Number(currentExpenses.value),
+            name: name.value,
+            max: Number(maxExpenses.value),
+            current: Number(currentExpenses.value),
             description: description.value,
             createdAt: serverTimestamp(),
         }
 
-        appendBudget(data);
+        addBudget(data);
     };
 
 
     return (
-        <Modal  {...props} >
-            <Modal.Header closeButton className='bg-light'>
-                <Modal.Title>Add Budget</Modal.Title>
+        <Modal className='budgetModal' {...props} aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header closeButton>
+                <Modal.Title><strong>Add Budget</strong></Modal.Title>
             </Modal.Header>
             <Modal.Body className="m-3">
             <Form className='vstack gap-3' noValidate validated={validated} onSubmit={handleSubmit}>
@@ -60,7 +54,7 @@ export default function AddBudgetModal( props ) {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Maximum Expenses</Form.Label>
-                    <Form.Control type="number" name="maxExpenses" required/>
+                    <Form.Control type="number" name="maxExpenses" required min={1}/>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Current Expenses</Form.Label>

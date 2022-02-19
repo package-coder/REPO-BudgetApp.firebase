@@ -1,33 +1,22 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-import { db } from '../../firebase';
-import { getAuth } from 'firebase/auth';
-import { doc, updateDoc, getDoc, Timestamp, serverTimestamp } from "firebase/firestore"; 
+import { auth, getCurrentUserId } from '../../firebase';
+import { Timestamp } from "firebase/firestore"; 
+import '../../styles/Modals.css'
+import { BudgetContext } from '../../context/BudgetContext';
+import useBudgetsDocument from '../../hooks/useBudgetsDocument';
+import LoadingComponent from '../LoadingComponent';
 
-function updateExpenses(docId, func, date){
 
-    const { uid } = getAuth().currentUser;
+export default function AddAmountModal({ show, onHide, budgetName, docId }) {
 
-    const ref = doc(db, "users", uid, "budgets", docId);
-
-    getDoc(ref).then(res => {
-        const currentValue = parseInt(res.data().currentExpenses);
-
-        return updateDoc(ref, {
-            "currentExpenses": func(currentValue),
-            "lastExpendDate": date
-        });
-
-    }).catch(console.error);
-}
-
-export default function AddExpensesModal({ show, onHide, budgetName, docId }) {
+    const [budget, loading, error] = useBudgetsDocument(getCurrentUserId(), docId);
 
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
 
     const [validated, setValidated] = useState(false);
-
+    const { updateExpenses } = useContext(BudgetContext);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -46,21 +35,25 @@ export default function AddExpensesModal({ show, onHide, budgetName, docId }) {
 
         updateExpenses(
             docId, 
-            (value) => Number(value) + Number(amount.value), 
+            (currentValue) => currentValue + Number(amount.value), 
             date.value
         )
     };
 
+    //if(loading) return <LoadingPage />
+
    return (
 
-    <Modal show={show} onHide={onHide}>
-        <Modal.Header closeButton className='bg-light'>
-            <Modal.Title>{budgetName}</Modal.Title>
+    <Modal className='amountModal' show={show} onHide={onHide} aria-labelledby="contained-modal-title-vcenter" centered>
+        <LoadingComponent />
+        
+        <Modal.Header closeButton>
+            <Modal.Title><strong>{budgetName}</strong></Modal.Title>
         </Modal.Header>
         <Modal.Body className="m-3">
         <Form className='vstack gap-3' noValidate validated={validated} onSubmit={handleSubmit}>
             <Form.Group>
-                <Form.Label>New Expend Amount</Form.Label>
+                <Form.Label>Amount</Form.Label>
                 <Form.Control type="number" name="amount" required />
             </Form.Group>
             <Form.Group>
@@ -69,7 +62,7 @@ export default function AddExpensesModal({ show, onHide, budgetName, docId }) {
             </Form.Group>
              <Form.Group className='text-end mt-3'>
                 <Button type="submit" size="sm">
-                    Add Expenses
+                    Add Amount
                 </Button>
             </Form.Group>
         </Form>

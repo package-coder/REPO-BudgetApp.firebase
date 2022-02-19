@@ -1,32 +1,39 @@
 import React from 'react';
 import BudgetCard from './BudgetCard';
+import { auth } from '../firebase';
+import { useBudgetsCollection, filterBudgets } from '../hooks/useBudgets';
+import useBudgetsDocument from '../hooks/useBudgetsDocument';
 
-import { db } from '../firebase';
-import { getAuth } from 'firebase/auth';
+function calculateTotal(budgets){
 
-import { doc } from "firebase/firestore"; 
-import { useDocument } from "react-firebase-hooks/firestore"
+  if(!budgets) return 0;
 
+  let totalMax = 0;
+  let totalCurrent = 0;
+  budgets.forEach(doc => {
+    const { current, max } = doc.data();
 
+    totalMax += max;
+    totalCurrent += current;
+  })
+
+  return { totalMax, totalCurrent };
+}
 
 export default function TotalBudget() {
-    const { uid } = getAuth().currentUser;
-    const [value] = useDocument(
-        doc(db, "users", uid),
-        {
-            napshotListenOptions: { includeMetadataChanges: true },
-        });
-        
-        
+ 
+  const { uid } = auth.currentUser;
+
+  const [budgets] = useBudgetsCollection(uid);
+  const { totalMax, totalCurrent } = calculateTotal(filterBudgets(budgets));
 
   return <BudgetCard
             passive
             passiveControls
-            passiveCaption={"Current"}
+            passiveCaption={"Total Expenses"}
             budgetName={"Total Budget"}
-            current={200}
-            max={value && value.data().totalBudgets}
-            docId={123}
+            current={totalCurrent}
+            max={totalMax}
           />;
 
 }

@@ -1,8 +1,10 @@
 import { Card, ProgressBar, Button } from 'react-bootstrap'
-import AddExpensesModal from './modals/AddExpensesModal';
-import useDisplay from '../hooks/useShow';
+import AddAmountModal from './modals/AddAmountModal';
+import DeleteItemModal from './modals/DeleteItemModal';
+import BudgetModal from './modals/BudgetModal'
 
 import '../styles/BudgetCard.css'
+import useModalHandler from '../hooks/useModalHandler';
 
 
 export default function BudgetCard( 
@@ -10,6 +12,7 @@ export default function BudgetCard(
             budgetName, 
             current, 
             max, 
+            description,
             lastExpendDate, 
             passive='',
             passiveControls='',
@@ -17,14 +20,29 @@ export default function BudgetCard(
             docId
         } 
     ){
+ 
 
+    const [showAmountModal, handleShowAmountModal, handleCloseAmountModal] = useModalHandler(false);
+    const [showDeleteModal, handleShowDeleteModal, handleCloseDeleteModal] = useModalHandler(false);
+    const [showBudgetModal, handleShowBudgetModal, handleCloseBudgetModal] = useModalHandler(false);
 
-    const { show, handleClose, handleShow } = useDisplay(false);
+    
+    function stopPropagation(handleOnClick){
 
+        const onClickEvent = (e) => {
+            e.stopPropagation();
+            handleOnClick();
+        }
+
+        return onClickEvent;
+    }
 
     return (
         <>
-            <Card className={`${passive && 'budgetCard-passive '}budgetCard`}>
+            <Card 
+                className={`${passive && 'budgetCard-passive '}budgetCard`}
+                onClick={!passive ? handleShowBudgetModal : null}
+                >
                 <Card.Header className="p-4">
                     <Card.Title as="span" className='m-0 fw-bold'>{budgetName}</Card.Title>
                     <section className='passive-hide'>Last Expend Date:{' '}{lastExpendDate}</section>
@@ -40,17 +58,38 @@ export default function BudgetCard(
                         </span>
                     </div>
                     <ProgressBar now={current} max={parseInt(max)} variant={getProgressBarVariant(current, max)} />
+                
                 </Card.Body>
+
                 <span className={`${passiveControls && 'passive-controls '}card-controls d-flex flex-column`}>
-                    <Button onClick={handleShow}><i class="bi bi-plus-lg"></i></Button>
-                    <Button variant="secondary"><i class="bi bi-info-lg"></i></Button>
+                    <Button onClick={stopPropagation(handleShowAmountModal)}><i class="bi bi-plus-lg"/></Button>
+                    <Button onClick={stopPropagation(handleShowBudgetModal)} variant="secondary"><i class="bi bi-info-lg" /></Button>
+                    <Button onClick={stopPropagation(handleShowDeleteModal)} variant="danger"><i class="bi bi-trash"/></Button>
                 </span>
+
             </Card>
-            <AddExpensesModal 
-                show={show} 
-                onHide={handleClose} 
+
+            <AddAmountModal 
+                show={showAmountModal} 
+                onHide={handleCloseAmountModal} 
                 budgetName={budgetName} 
                 docId={docId}
+            />
+            <DeleteItemModal 
+                show={showDeleteModal}
+                onHide={handleCloseDeleteModal}
+                budgetName={budgetName}
+                docId={docId}
+            />
+            <BudgetModal 
+                show={showBudgetModal}
+                onHide={handleCloseBudgetModal}
+                budgetName={budgetName}
+                description={description}
+                current={current}
+                max={max}
+                docId={docId}
+                progressVariant={getProgressBarVariant(current, max)}
             />
         </>
     )
